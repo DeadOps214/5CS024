@@ -1,11 +1,18 @@
 <?php
-
 session_start();
 
-if(isset($_SESSION['user_id']))
-{
-		unset($_SESSION['user_id']);
-		
-}
+    include("connection.php");
+    include("functions.php");
 
-header("Location: login.php");
+
+?>
+
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>
+           You are now logged out
+        </h1>
+        <a href="index.php">Home</a>
+    </body>
+</html>

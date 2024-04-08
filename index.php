@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+    include("connection.php");
+    include("functions.php");
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,20 +63,20 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
           <a class="dropdown-item" href="carer_login.php">Login</a>
-          <a class="dropdown-item" href="carer_signup.php">Sign Up</a>
+          <a class="dropdown-item" href="carer_register.php">Register</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#">Logout</a>
         </div>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Customers
+          Patients
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
-          <a class="dropdown-item" href="customer_login.php">Login</a>
-          <a class="dropdown-item" href="customer_signup.php">Sign Up</a>
+          <a class="dropdown-item" href="patient_login.php">Login</a>
+          <a class="dropdown-item" href="patient_register.php">Register</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Logout</a>
+          <a class="dropdown-item" href="logout.php">Logout</a>
         </div>
       </li>
     </ul>

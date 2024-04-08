@@ -13,7 +13,7 @@
         {
                 //Read from database
 
-                $query = "Select * from carer_accounts where user_name = '$user_name' limit 1";
+                $query = "Select * from patient_accounts where user_name = '$user_name' limit 1";
                 
                 $result = mysqli_query($con, $query);
                 if($result)
@@ -26,7 +26,7 @@
                        {
 
                         $_SESSION['user_id'] = $user_data['user_id'];
-                        header("location: carer_dashboard.php");
+                        header("location: index.php");
                         die;
                        }
                     }
@@ -57,7 +57,7 @@
     </head>
     <body>
         <nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
-            <a class="navbar-brand" href="#">Carer Login</a>
+            <a class="navbar-brand" href="#">Patient Login</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -71,6 +71,7 @@
                             Carers
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="carer_login.php">Login</a>
                             <a class="dropdown-item" href="carer_register.php">Register</a>
                             <a class="dropdown-item" href="logout.php">Logout</a>
                         </div>
@@ -80,7 +81,6 @@
                             Patients
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="patient_login.php">Login</a>
                             <a class="dropdown-item" href="patient_register.php">Register</a>
                             <a class="dropdown-item" href="logout.php">Logout</a>
                         </div>
