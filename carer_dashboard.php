@@ -1,101 +1,133 @@
 <?php
 session_start();
 
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header("location: carer_login.php");
-    exit();
-}
-
 include("connection.php");
+include("functions.php");
 
-// Fetch user's name
-$user_id = $_SESSION['user_id'];
-$query = "SELECT full_name FROM carer_accounts WHERE user_id = '$user_id'";
+// Check if the user is logged in as a carer
+if (!isset($_SESSION['carer_id'])) {
+    header("Location: carer_login.php"); // Redirect to carer login page if not logged in
+    exit();
+}
+
+// Fetch carer's appointments
+$carer_id = $_SESSION['carer_id'];
+$query = "SELECT * FROM appointments WHERE carer_id = $carer_id ORDER BY appointment_date ASC";
 $result = mysqli_query($con, $query);
-if (!$result) {
-    echo "Error fetching user data: " . mysqli_error($con);
-    exit();
-}
-$user_data = mysqli_fetch_assoc($result);
-$user_name = $user_data['full_name'];
-
-// Fetch user's timetable
-$query = "SELECT * FROM carer_timetable WHERE user_id = '$user_id'";
-$result = mysqli_query($con, $query);
-if (!$result) {
-    echo "Error fetching timetable data: " . mysqli_error($con);
-    exit();
-}
-
-// Check if the form is submitted for updating the timetable
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    // Update timetable
-    // Validate and sanitize inputs
-    $date = mysqli_real_escape_string($con, $_POST['date']);
-    $time = mysqli_real_escape_string($con, $_POST['time']);
-    $appointment = mysqli_real_escape_string($con, $_POST['appointment']);
-
-    // Insert or update timetable entry
-    $query = "INSERT INTO carer_timetable (user_id, date, time, appointment) VALUES ('$user_id', '$date', '$time', '$appointment')
-              ON DUPLICATE KEY UPDATE time = '$time', appointment = '$appointment'";
-    $result = mysqli_query($con, $query);
-    if (!$result) {
-        echo "Error updating timetable: " . mysqli_error($con);
-        exit();
-    }
-
-    // Redirect to prevent form resubmission
-    header("Location: carer_dashboard.php");
-    exit();
-}
-
-// Close the connection
-mysqli_close($con);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carer Dashboard</title>
-    <!-- Add your CSS styles here -->
+    <!-- Add your CSS links here -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .header {
+            text-align: center;
+            padding: 50px 0;
+            background-color: #f9f9f9;
+        }
+        .header h1 {
+            font-size: 36px;
+        }
+        .jumbotron {
+            background-color: #f9f9f9;
+            margin-bottom: 0;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Welcome, <?php echo $user_name; ?>!</h1>
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <a class="navbar-brand">Carer Dashboard</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="index.php">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="logout.php">Logout</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Contact</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
-<h2>Your Timetable</h2>
-<table border="1">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Appointment</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        while ($row = mysqli_fetch_assoc($result)) {
-            echo "<tr>";
-            echo "<td>" . $row['date'] . "</td>";
-            echo "<td>" . $row['time'] . "</td>";
-            echo "<td>" . $row['appointment'] . "</td>";
-            echo "</tr>";
-        }
-        ?>
-    </tbody>
-</table>
+<div class="header">
+    <h1>Welcome, Carer!</h1>
+</div>
 
-<h2>Add/Update Appointment</h2>
-<form action="" method="post">
-    <label for="date">Date:</label>
-    <input type="date" id="date" name="date" required><br>
-    <label for="time">Time:</label>
-    <input type="time" id="time" name="time" required><br>
-    <label for="appointment">Appointment:</label>
-    <input type="text" id="appointment" name="appointment" required><br>
-    <button type="submit">Submit</button>
-</form>
+<div class="container">
+    <div class="jumbotron">
+        <h2>Your Appointments:</h2>
 
+        <!-- Display existing appointments in a table -->
+        <?php if (mysqli_num_rows($result) > 0) : ?>
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Location</th>
+                    <th>Customer Name</th>
+                </tr>
+                <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+                    <tr>
+                        <td><?php echo $row['appointment_date']; ?></td>
+                        <td><?php echo $row['appointment_time']; ?></td>
+                        <td><?php echo $row['location']; ?></td>
+                        <!-- Fetch customer name from related table -->
+                        <?php
+                            $customer_id = $row['customer_id'];
+                            $customer_query = "SELECT full_name FROM patient_accounts WHERE customer_id = $customer_id";
+                            $customer_result = mysqli_query($con, $customer_query);
+                            $customer_data = mysqli_fetch_assoc($customer_result);
+                            $customer_name = $customer_data['full_name'];
+                        ?>
+                        <td><?php echo $customer_name; ?></td>
+                    </tr>
+                <?php endwhile; ?>
+            </table>
+        <?php else : ?>
+            <p>No appointments found.</p>
+        <?php endif; ?>
+
+        <h2>Create New Appointment:</h2>
+        <!-- Link to create appointment form -->
+        <a href="create_appointment.php">Create New Appointment</a>
+    </div>
+</div>
+
+<footer class="footer mt-auto py-3 bg-dark">
+    <div class="container text-white">
+        <span class="text-muted">Helping Hands - Connecting Hearts, Enriching Lives.</span>
+    </div>
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
