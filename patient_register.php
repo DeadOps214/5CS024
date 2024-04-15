@@ -12,8 +12,8 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
     $password = $_POST['password'];
     if(!empty($fullname) && !empty($Email) && !empty($password) && !is_numeric($user_name)) {
         // If correctly entered, save to database
-        $user_id = random_num(50);
-        $query = "INSERT INTO patient_accounts (user_id, full_name, user_name, email, password) VALUES ('$user_id', '$fullname', '$user_name', '$Email', '$password')";
+        $user_id = random_num(11);
+        $query = "INSERT INTO patient_accounts (customer_id, full_name, user_name, email, password) VALUES ('$user_id', '$fullname', '$user_name', '$Email', '$password')";
         mysqli_query($con, $query);
         header("location: patient_login.php");
         die;

@@ -1,44 +1,39 @@
 <?php
-    session_start();
+session_start();
 
-    include("connection.php");
-    include("functions.php");
+include("connection.php");
+include("functions.php");
 
-    if($_SERVER['REQUEST_METHOD'] == "POST")
-    {
-        //check if something was posted
-        $user_name = $_POST['user_name'];
-        $password = $_POST['password'];
-        if(!empty($user_name) && !empty($password) && !is_numeric($user_name))
-        {
-                //Read from database
+if($_SERVER['REQUEST_METHOD'] == "POST") {
+    // Check if something was posted
+    $user_name = $_POST['user_name'];
+    $password = $_POST['password'];
 
-                $query = "Select * from carer_accounts where user_name = '$user_name' limit 1";
-                
-                $result = mysqli_query($con, $query);
-                if($result)
-                {
-                    if($result && mysqli_num_rows($result) > 0)
-                    {
-                        
-                        $user_data = mysqli_fetch_assoc($result);
-                       if($user_data['password'] === $password)
-                       {
+    if(!empty($user_name) && !empty($password) && !is_numeric($user_name)) {
+        // Read from database
+        $query = "SELECT * FROM carer_accounts WHERE user_name = '$user_name' LIMIT 1";
+        $result = mysqli_query($con, $query);
 
-                        $_SESSION['user_id'] = $user_data['user_id'];
-                        header("location: carer_dashboard.php");
-                        die;
-                       }
-                    }
-                }
-            echo "Please enter valid information!!";
-        }else
-        {
-            echo "Please enter valid information!!";
+        if($result && mysqli_num_rows($result) > 0) {
+            $user_data = mysqli_fetch_assoc($result);
+            if($user_data['password'] === $password) {
+                // Password verification successful, set session and redirect to carer_dashboard.php
+                $_SESSION['carer_id'] = $user_data['carer_id'];
+                header("location: carer_dashboard.php");
+                exit(); // Terminate script execution after redirection
+            } else {
+                echo "Incorrect username or password!";
+            }
+        } else {
+            echo "User not found!";
         }
-
+    } else {
+        echo "Please enter valid information!";
     }
+}
 ?>
+
+
 
 <!DOCTYPE html>
 <html>
