@@ -5,14 +5,14 @@ include("connection.php");
 include("functions.php");
 
 // Check if the user is logged in as a carer
-if (!isset($_SESSION['carer_id'])) {
-    header("Location: carer_login.php"); // Redirect to carer login page if not logged in
+if (!isset($_SESSION['customer_id'])) {
+    header("Location: patient_login.php"); // Redirect to carer login page if not logged in
     exit();
 }
 
-// Fetch carer's appointments
-$carer_id = $_SESSION['carer_id'];
-$query = "SELECT * FROM appointments WHERE carer_id = $carer_id ORDER BY appointment_date ASC";
+// Fetch customer's appointments
+$customer_id = $_SESSION['customer_id'];
+$query = "SELECT * FROM appointments WHERE customer_id = $customer_id ORDER BY appointment_date ASC";
 $result = mysqli_query($con, $query);
 ?>
 
@@ -21,7 +21,7 @@ $result = mysqli_query($con, $query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carer Dashboard</title>
+    <title>Patient Dashboard</title>
     <!-- Add your CSS links here -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
@@ -56,7 +56,7 @@ $result = mysqli_query($con, $query);
 <body>
 
 <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-    <a class="navbar-brand">Carer Dashboard</a>
+    <a class="navbar-brand">Patient Dashboard</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -76,7 +76,7 @@ $result = mysqli_query($con, $query);
 </nav>
 
 <div class="header">
-    <h1>Welcome, Carer!</h1>
+    <h1>Welcome, Patient!</h1>
 </div>
 
 <div class="container">
@@ -90,7 +90,7 @@ $result = mysqli_query($con, $query);
                     <th>Date</th>
                     <th>Time</th>
                     <th>Location</th>
-                    <th>Customer Name</th>
+                    <th>Carer Name</th>
                 </tr>
                 <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                     <tr>
@@ -99,13 +99,13 @@ $result = mysqli_query($con, $query);
                         <td><?php echo $row['location']; ?></td>
                         <!-- Fetch customer name from related table -->
                         <?php
-                            $customer_id = $row['customer_id'];
-                            $customer_query = "SELECT full_name FROM patient_accounts WHERE customer_id = $customer_id";
-                            $customer_result = mysqli_query($con, $customer_query);
-                            $customer_data = mysqli_fetch_assoc($customer_result);
-                            $customer_name = $customer_data['full_name'];
+                            $carer_id = $row['carer_id'];
+                            $carer_query = "SELECT full_name FROM carer_accounts WHERE carer_id = $carer_id";
+                            $carer_result = mysqli_query($con, $carer_query);
+                            $carer_data = mysqli_fetch_assoc($carer_result);
+                            $carer_name = $carer_data['full_name'];
                         ?>
-                        <td><?php echo $customer_name; ?></td>
+                        <td><?php echo $carer_name; ?></td>
                     </tr>
                 <?php endwhile; ?>
             </table>
@@ -115,7 +115,7 @@ $result = mysqli_query($con, $query);
 
         <h2>Create New Appointment:</h2>
         <!-- Link to create appointment form -->
-        <a href="create_appointment.php">Create New Appointment</a>
+        <a href="create_appointment_patient.php">Create New Appointment</a>
     </div>
 </div>
 

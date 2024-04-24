@@ -102,8 +102,8 @@ session_start();
         <p>Easily create and manage appointments with your preferred carers.</p>
       </div>
       <div class="col-md-4">
-        <h4>Health Condition Monitoring</h4>
-        <p>Add your conditions to your profile for carers to keep up to date.</p>
+        <h4>Carer Selection</h4>
+        <p>Patients can choose what carer they book their appointments with.</p>
       </div>
       <div class="col-md-4">
         <h4>Secure Communication</h4>

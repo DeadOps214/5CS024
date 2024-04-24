@@ -16,7 +16,8 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 
         if($result && mysqli_num_rows($result) > 0) {
             $user_data = mysqli_fetch_assoc($result);
-            if($user_data['password'] === $password) {
+            $hashed_password = md5($password); // Hash the input password
+            if($user_data['password'] === $hashed_password) {
                 // Password verification successful, set session and redirect to carer_dashboard.php
                 $_SESSION['carer_id'] = $user_data['carer_id'];
                 header("location: carer_dashboard.php");

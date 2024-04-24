@@ -39,4 +39,10 @@ function random_num($length)
 
 }
 
+// Function to validate email
+function isValidEmail($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
+}
+
+
 

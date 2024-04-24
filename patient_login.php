@@ -1,50 +1,44 @@
 <?php
-    session_start();
+session_start();
 
-    include("connection.php");
-    include("functions.php");
+include("connection.php");
+include("functions.php");
 
-    if($_SERVER['REQUEST_METHOD'] == "POST")
-    {
-        //check if something was posted
-        $user_name = $_POST['user_name'];
-        $password = $_POST['password'];
-        if(!empty($user_name) && !empty($password) && !is_numeric($user_name))
-        {
-                //Read from database
+if($_SERVER['REQUEST_METHOD'] == "POST") {
+    // Check if something was posted
+    $user_name = $_POST['user_name'];
+    $password = $_POST['password'];
 
-                $query = "Select * from patient_accounts where user_name = '$user_name' limit 1";
-                
-                $result = mysqli_query($con, $query);
-                if($result)
-                {
-                    if($result && mysqli_num_rows($result) > 0)
-                    {
-                        
-                        $user_data = mysqli_fetch_assoc($result);
-                       if($user_data['password'] === $password)
-                       {
+    if(!empty($user_name) && !empty($password) && !is_numeric($user_name)) {
+        // Read from database
+        $query = "SELECT * FROM patient_accounts WHERE user_name = '$user_name' LIMIT 1";
+        $result = mysqli_query($con, $query);
 
-                        $_SESSION['user_id'] = $user_data['user_id'];
-                        header("location: index.php");
-                        die;
-                       }
-                    }
-                }
-            echo "Please enter valid information!!";
-        }else
-        {
-            echo "Please enter valid information!!";
+        if($result && mysqli_num_rows($result) > 0) {
+            $user_data = mysqli_fetch_assoc($result);
+			$hashed_password = md5($password); // Hash the input password
+            if($user_data['password'] === $hashed_password) {
+                // Password verification successful, set session and redirect to carer_dashboard.php
+                $_SESSION['customer_id'] = $user_data['customer_id'];
+                header("location: patient_dashboard.php");
+                exit(); // Terminate script execution after redirection
+            } else {
+                echo "Incorrect username or password!";
+            }
+        } else {
+            echo "User not found!";
         }
-
+    } else {
+        echo "Please enter valid information!";
     }
+}
 ?>
 
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Carer Login</title>  
+        <title>Patient Login</title>  
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">  
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -93,7 +87,7 @@
         </nav>
 
         <div class="container">
-            <h1>Carer Login Page</h1>
+            <h1>Patient Login Page</h1>
             <!-- LOGIN form -->
             <form action="" method="post" autocomplete="on">
                 <label for="user_name"><b>Username:</b></label>
@@ -110,7 +104,7 @@
             </form>
             <br>
             <p>If you are not registered yet, please register below.</p>
-            <a href="carer_register.php">Register</a>
+            <a href="patient_register.php">Register</a>
         </div>
 
         <!-- Bootstrap JS and jQuery -->
