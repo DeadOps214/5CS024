@@ -43,6 +43,18 @@ function random_num($length)
 function isValidEmail($email) {
     return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
+//Function to send emails upon appointment booking
+function sendEmailNotification($email, $subject, $message) {
+    // Subject for the email
+    $subject = "Appointment Booked";
+
+    // Send email
+    if (mail($email, $subject, $message)) {
+        echo "Email notification sent successfully to $email";
+    } else {
+        echo "Failed to send email notification to $email";
+    }
+}
 
 
 

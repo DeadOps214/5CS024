@@ -14,6 +14,10 @@ if (!isset($_SESSION['carer_id'])) {
 $carer_id = $_SESSION['carer_id'];
 $query = "SELECT * FROM appointments WHERE carer_id = $carer_id ORDER BY appointment_date ASC";
 $result = mysqli_query($con, $query);
+
+// Retrieve the logged-in user's username if set in the session
+$username = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : "Undefined";
+
 ?>
 
 <!DOCTYPE html>
@@ -69,7 +73,7 @@ $result = mysqli_query($con, $query);
                 <a class="nav-link" href="logout.php">Logout</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Contact</a>
+                <a class="nav-link" href="carer_account.php"><?php echo $username; ?></a>
             </li>
         </ul>
     </div>
@@ -100,7 +104,7 @@ $result = mysqli_query($con, $query);
                         <!-- Fetch customer name from related table -->
                         <?php
                             $customer_id = $row['customer_id'];
-                            $customer_query = "SELECT full_name FROM patient_accounts WHERE customer_id = $customer_id";
+                            $customer_query = "SELECT full_name FROM customer_accounts WHERE customer_id = $customer_id";
                             $customer_result = mysqli_query($con, $customer_query);
                             $customer_data = mysqli_fetch_assoc($customer_result);
                             $customer_name = $customer_data['full_name'];
@@ -130,4 +134,6 @@ $result = mysqli_query($con, $query);
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+
 

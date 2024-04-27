@@ -11,8 +11,8 @@ if (!isset($_SESSION['customer_id'])) {
 }
 
 // Fetch available carers from carer_accounts
-$query = "SELECT carer_id, full_name FROM carer_accounts";
-$result = mysqli_query($con, $query);
+$query = "SELECT carer_id, full_name, email FROM carer_accounts";
+$resultCarers = mysqli_query($con, $query);
 
 // Check if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -31,11 +31,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result) {
         // Appointment created successfully
-        header("Location: patient_dashboard.php"); // Redirect back to patient dashboard
+
+        // Fetch carer's email address and name
+        $carer_email_query = "SELECT email, full_name FROM carer_accounts WHERE carer_id = '$carer_id'";
+        $carer_email_result = mysqli_query($con, $carer_email_query);
+        $carer_email_row = mysqli_fetch_assoc($carer_email_result);
+        $carer_email = $carer_email_row['email'];
+        $carer_name = $carer_email_row['full_name'];
+
+        // Send email notification to carer
+        $carer_subject = "Appointment Booked";
+        $carer_message = "Appointment booked with you by a patient on $date at $time. Location: $location";
+
+        sendEmailNotification($carer_email, $carer_subject, $carer_message);
+
+        // Fetch customer's email address and name
+        $customer_email_query = "SELECT email, full_name FROM customer_accounts WHERE customer_id = '$customer_id'";
+        $customer_email_result = mysqli_query($con, $customer_email_query);
+        $customer_email_row = mysqli_fetch_assoc($customer_email_result);
+        $customer_email = $customer_email_row['email'];
+        $customer_name = $customer_email_row['full_name'];
+
+        // Send email notification to customer
+        $customer_subject = "Appointment Booked";
+        $customer_message = "Appointment booked with carer $carer_name on $date at $time. Location: $location";
+
+        sendEmailNotification($customer_email, $customer_subject, $customer_message);
+
+        // Redirect back to patient dashboard
+        header("Location: patient_dashboard.php");
         exit();
     } else {
         // Appointment creation failed
-        echo "Error: " . mysqli_error($connection);
+        echo "Error: " . mysqli_error($con);
     }
 }
 
@@ -66,9 +94,9 @@ $resultAppointments = mysqli_query($con, $query);
         <label for="location">Location:</label>
         <input type="text" id="location" name="location" required><br>
 
-        <label for="customer_id">Select Carer:</label>
+        <label for="carer_id">Select Carer:</label>
         <select id="carer_id" name="carer_id" required>
-            <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+            <?php while ($row = mysqli_fetch_assoc($resultCarers)) : ?>
                 <option value="<?php echo $row['carer_id']; ?>"><?php echo $row['full_name']; ?></option>
             <?php endwhile; ?>
         </select><br>

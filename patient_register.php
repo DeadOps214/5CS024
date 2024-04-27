@@ -38,7 +38,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
     // If no errors, proceed with registration
     if(empty($errors)) {
         $user_id = random_num(11);
-        $query = "INSERT INTO patient_accounts (customer_id, full_name, user_name, email, password) VALUES ('$user_id', '$fullname', '$user_name', '$email', md5('$password'))";
+        $query = "INSERT INTO customer_accounts (customer_id, full_name, user_name, email, password) VALUES ('$user_id', '$fullname', '$user_name', '$email', md5('$password'))";
         $result = mysqli_query($con, $query);
 
         if($result) {

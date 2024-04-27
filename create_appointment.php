@@ -10,8 +10,8 @@ if (!isset($_SESSION['carer_id'])) {
     exit();
 }
 
-// Fetch available customers from patient_accounts
-$query = "SELECT customer_id, full_name FROM patient_accounts";
+// Fetch available patients from patient_accounts
+$query = "SELECT customer_id, full_name FROM customer_accounts";
 $result = mysqli_query($con, $query);
 
 // Check if form is submitted
@@ -30,19 +30,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = mysqli_query($con, $query);
 
     if ($result) {
-        // Appointment created successfully
+        // Fetch carer name
+        $carerQuery = "SELECT full_name FROM carer_accounts WHERE carer_id = '$carer_id'";
+        $carerResult = mysqli_query($con, $carerQuery);
+        $carerData = mysqli_fetch_assoc($carerResult);
+        $carer_name = $carerData['full_name'];
+
+        // Send email notifications
+        sendEmailNotification($carer_id, "carer", $date, $time, $location, $customer_name);
+        sendEmailNotification($customer_id, "customer", $date, $time, $location, $carer_name);
+
         header("Location: carer_dashboard.php"); // Redirect back to carer dashboard
         exit();
     } else {
         // Appointment creation failed
-        echo "Error: " . mysqli_error($connection);
+        echo "Error: " . mysqli_error($con);
     }
 }
-
-// Fetch carer's appointments
-$carer_id = $_SESSION['carer_id'];
-$query = "SELECT * FROM appointments WHERE carer_id = $carer_id ORDER BY appointment_date ASC";
-$resultAppointments = mysqli_query($con, $query);
 ?>
 
 <!DOCTYPE html>
@@ -79,3 +83,4 @@ $resultAppointments = mysqli_query($con, $query);
     <!-- Add any additional content or scripts as needed -->
 </body>
 </html>
+

@@ -14,6 +14,10 @@ if (!isset($_SESSION['customer_id'])) {
 $customer_id = $_SESSION['customer_id'];
 $query = "SELECT * FROM appointments WHERE customer_id = $customer_id ORDER BY appointment_date ASC";
 $result = mysqli_query($con, $query);
+
+// Retrieve the logged-in user's username if set in the session
+$username = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : "Undefined";
+
 ?>
 
 <!DOCTYPE html>
@@ -51,6 +55,10 @@ $result = mysqli_query($con, $query);
         th {
             background-color: #f2f2f2;
         }
+        .account-info {
+            text-align: right;
+            padding: 15px;
+        }
     </style>
 </head>
 <body>
@@ -68,11 +76,11 @@ $result = mysqli_query($con, $query);
             <li class="nav-item">
                 <a class="nav-link" href="logout.php">Logout</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Contact</a>
-            </li>
+			<li class="nav-item">
+                <a class="nav-link" href="patient_account.php"><?php echo $username; ?></a>
+			</li>
         </ul>
-    </div>
+	</div>
 </nav>
 
 <div class="header">
@@ -130,3 +138,5 @@ $result = mysqli_query($con, $query);
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+

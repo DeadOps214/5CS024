@@ -11,15 +11,16 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 
     if(!empty($user_name) && !empty($password) && !is_numeric($user_name)) {
         // Read from database
-        $query = "SELECT * FROM patient_accounts WHERE user_name = '$user_name' LIMIT 1";
+        $query = "SELECT * FROM customer_accounts WHERE user_name = '$user_name' LIMIT 1";
         $result = mysqli_query($con, $query);
 
         if($result && mysqli_num_rows($result) > 0) {
             $user_data = mysqli_fetch_assoc($result);
 			$hashed_password = md5($password); // Hash the input password
             if($user_data['password'] === $hashed_password) {
-                // Password verification successful, set session and redirect to carer_dashboard.php
+                // Password verification successful, set session and redirect to patient_dashboard.php
                 $_SESSION['customer_id'] = $user_data['customer_id'];
+                $_SESSION['user_name'] = $user_data['user_name']; // Set user_name in session
                 header("location: patient_dashboard.php");
                 exit(); // Terminate script execution after redirection
             } else {
